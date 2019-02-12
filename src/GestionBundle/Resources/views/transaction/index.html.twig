@@ -1,0 +1,140 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+
+<div class="toolbar row">
+    <div class="col-sm-6 hidden-xs">
+        <div class="page-header">
+            <h1>Gestion des transactions</h1>
+        </div>
+    </div>                          
+</div>
+<br>
+<div class="row">
+    <div class="col-md-12">
+        <!-- start: DYNAMIC TABLE PANEL -->
+        <div class="panel panel-white">
+            <div class="panel-heading">
+                <div class="panel-tools">
+                    <div class="dropdown">
+                        <a data-toggle="dropdown" class="btn btn-xs dropdown-toggle btn-transparent-grey">
+                            <i class="fa fa-cog"></i>
+                        </a>
+                        <ul class="dropdown-menu dropdown-light pull-right" role="menu">
+                            <li>
+                                <a class="panel-collapse collapses" href="#"><i class="fa fa-angle-up"></i> <span>Collapse</span> </a>
+                            </li>                            
+                            <li>
+                                <a class="panel-expand" href="#">
+                                    <i class="fa fa-expand"></i> <span>Fullscreen</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-12 space20">
+                <a class="btn btn-azure" href="{{ path('transaction_new') }}">
+                    Ajouter une nouvelle transaction <i class="fa fa-plus"></i>
+                </a>
+                
+            </div>
+            <div class="panel-body">
+                <table class="table table-striped table-bordered table-hover table-full-width" id="sample_1">
+                    <thead>
+                        <tr>
+                            <th>Id</th>
+                            <th>Title</th>
+                            <th>Amount</th>
+                            <th>Isinput</th>
+                            <th>Description</th>
+                            <th>Isvalid</th>
+                            <th>Createdat</th>
+                            <th>Updatedat</th>
+                            <th>Category</th>
+                            <th>tags</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {% for transaction in transactions %}
+                        <tr id="tr{{transaction.id}}">  
+                            <td><a href="{{ path('transaction_show', { 'id': transaction.id }) }}">{{ transaction.id }}</a></td>  
+                            <td>{{ transaction.title }}</td>
+                            <td>{{ transaction.amount }}</td>
+                            <td>{% if transaction.isInput %}Yes{% else %}No{% endif %}</td>
+                            <td>{{ transaction.description }}</td>
+                            <td>{% if transaction.isValid %}Yes{% else %}No{% endif %}</td>
+                            <td>{% if transaction.createdAt %}{{ transaction.createdAt|date('Y-m-d H:i:s') }}{% endif %}</td>
+                            <td>{% if transaction.updatedAt %}{{ transaction.updatedAt|date('Y-m-d H:i:s') }}{% endif %}</td>
+                            <td>{{ transaction.category.title }}</td>
+                            <td><ul>{% for tag in transaction.tag %}
+                                <li>{{tag.name}}</li>
+                                {% endfor %}</ul>
+                            </td>
+                            <th style="white-space: nowrap;">                            
+                                <a href="{{ path('transaction_show', { 'id': transaction.id }) }}" class="btn btn-xs btn-info tooltips" data-placement="top" data-original-title="Détails">
+                                    <i class="fa fa-info"></i>
+                                </a>
+                                <a href="{{ path('transaction_edit', { 'id': transaction.id }) }}" class="btn btn-xs btn-green tooltips" data-placement="top" data-original-title="Modifier">
+                                    <i class="fa fa-pencil"></i>
+                                </a>                               
+                                
+                                <button type="button" id="{{transaction.id}}" class="btn-xs btn-red tooltips disable" title="Supprimer"><i class="fa fa-trash-o"></i></button>
+                                
+                                
+                            </th>
+                        </tr>
+                    {% endfor %}                                   
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <!-- end: DYNAMIC TABLE PANEL -->
+    </div>
+</div>   
+
+{% endblock %}
+
+
+{% block speceficjs %}
+    <script type="text/javascript">
+    $(document).ready(function() {
+        {% for flashMessage in app.session.flashbag.get('notice') %}
+            toastr.success('{{ flashMessage }}');
+        {% endfor %}
+        $('.disable').click(function(){     
+        var id = $(this).attr('id');
+        var ligne = '#tr'+id; 
+            swal({
+              title: 'Êtes-vous sûr?',
+              text: "Vous allez supprimer cette transaction!",
+              type: 'warning',
+              showCancelButton: true,
+              confirmButtonColor: '#3085d6',
+              cancelButtonColor: '#d33',
+              confirmButtonText: 'Oui, supprimer!',
+              cancelButtonText: 'Non'
+            }).then(function () {
+              $.ajax(
+                        {
+                            type: "post",
+                            url: "{{ path('transaction_delete') }}",
+                            data: "id="+id,
+                            success: function(data){
+                            }
+                        }
+                )
+              .done(function(data) {
+                swal("OK!", "transaction supprimé !", "success");
+                $(ligne).fadeOut();          
+              })
+              .error(function(data) {
+                swal("Oops", "We couldn't connect to the server!", "error");
+              });
+            })
+        });
+           
+    });
+    </script>
+{% endblock %}

@@ -1,0 +1,102 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+<div class="toolbar row">
+    <div class="col-sm-6 hidden-xs">
+        <div class="page-header">
+            <h1>Transactions du mois</h1>
+        </div>
+    </div>                          
+</div>
+<br>
+<div class="row">
+    <div class="col-md-12">
+        <!-- start: DYNAMIC TABLE PANEL -->
+        <div class="panel panel-white">
+            <div class="panel-heading">
+                <div class="panel-tools">
+                    <div class="dropdown">
+                        <a data-toggle="dropdown" class="btn btn-xs dropdown-toggle btn-transparent-grey">
+                            <i class="fa fa-cog"></i>
+                        </a>
+                        <ul class="dropdown-menu dropdown-light pull-right" role="menu">
+                            <li>
+                                <a class="panel-collapse collapses" href="#"><i class="fa fa-angle-up"></i> <span>Collapse</span> </a>
+                            </li>                            
+                            <li>
+                                <a class="panel-expand" href="#">
+                                    <i class="fa fa-expand"></i> <span>Fullscreen</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="panel-body">                
+
+               {{ form_start(form, {'attr': {'class': 'form-horizontal' , 'id':'search-form'}}) }}
+                    <div class="form-group">
+                        <div class="col-sm-6 col-sm-offset-4">
+                            <label class="col-sm-2 control-label" for="form-field-1">
+                                Mois
+                            </label>
+                            <div class="col-sm-9">
+                                {{ form_widget(form.created_at) }}
+                            </div>
+                        </div>
+                    </div>
+
+
+
+                    <div class="row">
+                        <div class="col-sm-4 col-sm-offset-4">
+                            <button type="submit" class="btn btn-azure btn-block" id="serach">
+                                Chercher <i class="fa fa-arrow-circle-right"></i>
+                            </button>
+                        </div>
+                    </div> 
+
+                    {{ form_rest(form) }}
+                    {{ form_errors(form) }}
+                {{ form_end(form) }}
+
+
+            </div>
+        </div>
+    </div>
+</div>
+<div id="result"></div> 
+{% endblock %}
+{% block speceficjs %}
+ <script>
+    jQuery(document).ready(function() {
+
+        function refreshList()
+        {
+            var date = $('#form_created_at').val();            
+            console.log(date);
+            $.ajax({
+                url: "{{ path('transaction_search_result_ajax') }}",
+                type: "GET",
+                data : { 'date': date},
+                dataType: "html",
+                success: function (data) {
+                    $('#result').html(data);
+                }
+            });
+        }
+
+        $('#search-form').on('submit', function(e){
+            e.preventDefault();
+            refreshList();            
+        });
+
+        $('.date-picker').datepicker({
+
+            format: "yyyy-mm",
+            startView: "months", 
+            minViewMode: "months"
+        });
+    });         
+</script>         
+{% endblock %}

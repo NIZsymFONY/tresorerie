@@ -1,0 +1,62 @@
+<div class="row">
+    <div class="col-md-12">
+        <!-- start: DYNAMIC TABLE PANEL -->
+        <div class="panel panel-white">
+            <div class="panel-heading">
+                <div class="panel-tools">
+                    <div class="dropdown">
+                        <a data-toggle="dropdown" class="btn btn-xs dropdown-toggle btn-transparent-grey">
+                            <i class="fa fa-cog"></i>
+                        </a>
+                        <ul class="dropdown-menu dropdown-light pull-right" role="menu">
+                            <li>
+                                <a class="panel-collapse collapses" href="#"><i class="fa fa-angle-up"></i> <span>Collapse</span> </a>
+                            </li>                            
+                            <li>
+                                <a class="panel-expand" href="#">
+                                    <i class="fa fa-expand"></i> <span>Fullscreen</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="panel-body">
+                <ul>
+
+                    <li>La somme des entrées du mois: {{sumInputThisMonth}}</li>
+                    <li>La somme des sorties  du mois: {{sumOutputThisMonth}}</li>
+                    <li>Montant de la trésorerie au début de ce mois: {{tresorieStartMonth}}</li>
+                    <li>Montant de la trésorerie à la fin de ce mois: {{tresorieAfterMonth}}</li>
+                </ul>
+                <table class="table table-striped table-bordered table-hover table-full-width" id="example_1">
+                    <thead>
+                        <tr>       
+                            <th>Date de création</th>                     
+                            <th>Title</th>
+                            <th>Amount</th>
+                            <th>Is input</th>                            
+                            <th>Is valid</th>
+                            <th class="hidden-xs">Description</th>
+                    </thead>
+                    <tbody>
+                    {% for transaction in transactions %}
+                        <tr id="tr{{transaction.id}}">
+                            <td>{{transaction.createdAt|date('Y-m-d')}}</td>
+                            <td>{{transaction.title}}</td>    
+                            <td>{{transaction.amount}}</td>
+                            <td>{% if transaction.isInput %}Yes{% else %}No{% endif %}</td>                     
+                            <td>{% if transaction.isValid %}Yes{% else %}No{% endif %}</td>
+                            <td class="hidden-xs">{{transaction.description}}</td>                          
+                           
+                            
+                        </tr>
+                    {% endfor %}                                   
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <!-- end: DYNAMIC TABLE PANEL -->
+    </div>
+</div>

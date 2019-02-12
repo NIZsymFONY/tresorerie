@@ -1,3 +1,16 @@
-app:
-    resource: '@AppBundle/Controller/'
-    type: annotation
+gestion_transaction:
+    resource: "@GestionBundle/Controller/TransactionController.php"
+    type:     annotation
+
+gestion_tag:
+    resource: "@GestionBundle/Controller/TagController.php"
+    type:     annotation
+
+gestion_category:
+    resource: "@GestionBundle/Controller/CategoryController.php"
+    type:     annotation
+
+gestion:
+    resource: "@GestionBundle/Resources/config/routing.yml"
+    prefix:   /
+
